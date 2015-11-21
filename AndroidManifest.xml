@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.praycounter"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="21" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/main_title"
+        android:theme="@style/AppTheme" >
+        
+        <!-- Broadcast Receivers --> 
+        <!-- Broadcast Receivers --> 
+		<receiver android:name="edu.praycounter.MainActivity$HeadButtonReceiver"> 
+			<intent-filter android:priority="1000" > 
+				<action android:name="android.intent.action.MEDIA_BUTTON" />
+				<action android:name="android.media.VOLUME_CHANGED_ACTION" />
+			</intent-filter> 
+		</receiver>
+
+		<activity
+            android:name=".MainActivity"
+            android:label="@string/main_title" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
