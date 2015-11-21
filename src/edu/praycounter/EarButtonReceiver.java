@@ -21,7 +21,9 @@ public class EarButtonReceiver extends BroadcastReceiver {
 	            } else if(keycode == KeyEvent.KEYCODE_MEDIA_PREVIOUS) {
 	                Log.d("TestApp", "PREVIOUS PRESSED");
 	            } else if(keycode == KeyEvent.KEYCODE_HEADSETHOOK) {
-//	            	((IEarButtonHandler)context).onEarButtonPress(keycode);
+	            	Intent intentStopClick = new Intent();
+	            	intentStopClick.setAction("earStopClick");	            	
+	            	context.sendBroadcast(intentStopClick);
 	                Log.d("TestApp", "EAR SET HOOT PRESSED");
 	            }
 	        }
