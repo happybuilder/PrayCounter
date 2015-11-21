@@ -22,13 +22,17 @@ public class EarButtonReceiver extends BroadcastReceiver {
 	                Log.d("TestApp", "PREVIOUS PRESSED");
 	            } else if(keycode == KeyEvent.KEYCODE_HEADSETHOOK) {
 	            	Intent intentStopClick = new Intent();
-	            	intentStopClick.setAction("earStopClick");	            	
+	            	intentStopClick.setAction("KEYCODE_HEADSETHOOK");	            	
 	            	context.sendBroadcast(intentStopClick);
-	                Log.d("TestApp", "EAR SET HOOT PRESSED");
+	                Log.d("TestApp", "HEAD SET HOOT PRESSED");
 	            }
 	        }
         }
         else {
+        	Intent intentVolumeClick = new Intent();
+        	intentVolumeClick.setAction("EXTRA_VOLUME_STREAM_VALUE");	            	
+        	context.sendBroadcast(intentVolumeClick);
+        	
         	int volume = (Integer)intent.getExtras().get("android.media.EXTRA_VOLUME_STREAM_VALUE");
         	Log.d("TestApp", "volume: " + Integer.toString(volume));
         }
