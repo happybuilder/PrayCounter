@@ -19,23 +19,27 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 	
-	private int count = 0;
+//	private int count = 0;
 	private int MIN_CLICK_INTERVAL = 1;	// 3 秒鐘之內不能再按.
 	private Date lastClickTime = new Date();
 	
+	private DbCounter dbCounter;
+	
 	private TextView txtCounter;
 	ComponentName headphoneButtonReceiverComponent;
-	AudioManager audioManager;
-	
+	AudioManager audioManager;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		dbCounter = new DbCounter(this);
+//		dbCounter = new DbCounter(new PrayCounterDbHelper(this));
+		
 		// Init counter
 		txtCounter = (TextView)this.findViewById(R.id.txtCounter);
-		txtCounter.setText(Integer.toString(count));
+		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
 		
 		IntentFilter ifHeadphoneButtonClick = new IntentFilter();
 		ifHeadphoneButtonClick.addAction("KEYCODE_HEADSETHOOK");
@@ -61,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 
+		dbCounter.getCounter(null);
+		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
 	}
 	
 	@Override
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 	
 	public void btnAddOne_onClick(View view) {
-		txtCounter.setText(Integer.toString(++count));	
+		addOne();
 	}
 
     protected BroadcastReceiver headphoneButtonClickReceiver = new BroadcastReceiver() {
@@ -94,9 +100,14 @@ public class MainActivity extends AppCompatActivity {
 					current.getTime() - lastClickTime.getTime());
 			if (clickInterval > MIN_CLICK_INTERVAL) {
 				lastClickTime = new Date();
-				txtCounter.setText(Integer.toString(++count));
+				addOne();
 			}
 		}
     };
+    
+    protected void addOne() {    	
+		int count = dbCounter.addOne(null);
+		txtCounter.setText(Integer.toString(count));	    	
+    }
     
 }
