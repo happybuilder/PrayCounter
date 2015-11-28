@@ -6,11 +6,13 @@ import java.util.concurrent.TimeUnit;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -100,8 +102,22 @@ public class MainActivity extends AppCompatActivity {
 	}
 	
 	public void btnResetCounter_onClick(View view) {
-		resetCounter();
-	}
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    TextView title = new TextView(this);
+	    title.setText("   [ 重置數值 ]");
+	    title.setTextSize(40);
+	    builder.setCustomTitle(title);
+	    builder.setMessage("確定要重置回零嗎?").setPositiveButton("確定", confirmResetDialogClickListener)
+	        .setNegativeButton("取消", confirmResetDialogClickListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+        textView.setTextSize(40);
+        // Positive
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextSize(40);
+        // Negative
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextSize(40);
+    }
 
     protected BroadcastReceiver headphoneButtonClickReceiver = new BroadcastReceiver() {
 		@Override
@@ -126,4 +142,19 @@ public class MainActivity extends AppCompatActivity {
 		txtCounter.setText(Integer.toString(0));	    	
     }
     
+    DialogInterface.OnClickListener confirmResetDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+            case DialogInterface.BUTTON_POSITIVE:
+        		resetCounter();
+                break;
+
+            case DialogInterface.BUTTON_NEGATIVE:
+                // Do nothing.
+                break;
+            }
+        }
+    };
+
 }
