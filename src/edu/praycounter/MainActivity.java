@@ -15,11 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 	
-//	private int count = 0;
+	private boolean debug = false;
+	
 	private int MIN_CLICK_INTERVAL = 1;	// 3 秒鐘之內不能再按.
 	private Date lastClickTime = new Date();
 	
@@ -34,8 +36,13 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		Button btnAddOne = (Button)findViewById(R.id.btnAddOne);
+		
+		if (!debug) {
+			btnAddOne.setVisibility(View.GONE);
+		}
+		
 		dbCounter = new DbCounter(this);
-//		dbCounter = new DbCounter(new PrayCounterDbHelper(this));
 		
 		// Init counter
 		txtCounter = (TextView)this.findViewById(R.id.txtCounter);
@@ -43,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 		
 		IntentFilter ifHeadphoneButtonClick = new IntentFilter();
 		ifHeadphoneButtonClick.addAction("KEYCODE_HEADSETHOOK");
-		ifHeadphoneButtonClick.addAction("EXTRA_VOLUME_STREAM_VALUE");
+//		ifHeadphoneButtonClick.addAction("EXTRA_VOLUME_STREAM_VALUE");	// 大細聲不加一, 這句指令保留.
 		this.registerReceiver(headphoneButtonClickReceiver, ifHeadphoneButtonClick);
 		
 		Drawable backImg = getResources().getDrawable(R.drawable.lotus1);
@@ -65,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 
-		dbCounter.getCounter(null);
+		dbCounter.getCounter();
 		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
 	}
 	
@@ -91,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
 	public void btnAddOne_onClick(View view) {
 		addOne();
 	}
+	
+	public void btnResetCounter_onClick(View view) {
+		resetCounter();
+	}
 
     protected BroadcastReceiver headphoneButtonClickReceiver = new BroadcastReceiver() {
 		@Override
@@ -106,8 +117,13 @@ public class MainActivity extends AppCompatActivity {
     };
     
     protected void addOne() {    	
-		int count = dbCounter.addOne(null);
+		int count = dbCounter.addOne();
 		txtCounter.setText(Integer.toString(count));	    	
+    }
+    
+    protected void resetCounter() {
+    	dbCounter.resetCounter();
+		txtCounter.setText(Integer.toString(0));	    	
     }
     
 }

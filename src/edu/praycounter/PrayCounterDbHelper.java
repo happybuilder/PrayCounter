@@ -19,7 +19,7 @@ public class PrayCounterDbHelper extends SQLiteOpenHelper {
 					+ ", roundsize integer not null default 0" // 一輪經文為多少遍.
 					+ ", name nvarchar(30)" // 經文名稱.
 					+ ", notes text" // 筆記.
-					+ ", islast boolean" // 目前是否誦此經文.
+					+ ", iscurrent boolean" // 目前是否誦此經文.
 					+ ", lastupdate varchar(12))" // 最後更新日期時間.
 	};
 

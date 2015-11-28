@@ -20,16 +20,16 @@ public class DbCounter {
 	private final static int ROUNDSIZE = 3;
 	private final static int NAME = 4;
 	private final static int NOTES = 5;
-	private final static int ISLAST = 6;
+	private final static int ISCURRENT = 6;
 	private final static int LASTUPDATE = 7;
 	
+	// Current counter record.
 	private int id;				// Record ID.
 	private int current;		// 已誦了多少遍經文.
 	private int round;			// 已誦了多少輪經文.
 	private int roundSize;		// 一輪經文為多少遍.
 	private String name;		// 經文名稱.
 	private String notes;		// 筆記.
-	private boolean isLast;		// 目前是否誦此經文.
 	private Date lastUpdate;	// 最後更新日期時間.
 	
 	private PrayCounterDbHelper dbHelper;
@@ -46,10 +46,10 @@ public class DbCounter {
 		return this.current;
 	}
 	
-	// name: 經文名稱.
+	// 替目前經文加一.
 	// 傳回最新 counter 數值.
-	public int addOne(String name) {
-		if (getCounter(name)) 
+	public int addOne() {
+		if (getCounter()) 
 		// 將現有的誦經紀錄加一.
 		{
 			addOneByUpdate();
@@ -60,13 +60,12 @@ public class DbCounter {
 			addOneByInsert(null, 0, null);	// TODO.
 		}
 		
+        getCurrent();
+        
 		return current;
 	}
 	
 	private int addOneByUpdate() {
-		// 清除全部紀錄的 is last 旗號.
-		dbHelper.getDb().execSQL("UPDATE counter set islast = 0");
-		
 		current++;
 		roundSize = 0;		// TODO: 稍後從畫面設定.
 
@@ -86,20 +85,17 @@ public class DbCounter {
         values.put("_id", id);
         values.put("current", current);
         values.put("round", round);
-        values.put("islast", true);
+        values.put("iscurrent", true);
         values.put("lastupdate", sDateTime);
         
         dbHelper.getDb().update("counter", values, "_id = ?", new String[]{Integer.toString(id)});
-        
-        // clear temp PrayCounter properties.
-        this.id = -1;
         
         return current;		
 	}
 	
 	public void addOneByInsert(String name, int roundSize, String notes) {
 		// 清除全部紀錄的 is last 旗號.
-		dbHelper.getDb().execSQL("UPDATE counter set islast = 0");
+		dbHelper.getDb().execSQL("UPDATE counter set iscurrent = 0");
 
 		SimpleDateFormat sdf = new SimpleDateFormat(PrayCounterDbHelper.DATETIMEFORMAT);
 		lastUpdate = new Date();
@@ -109,7 +105,7 @@ public class DbCounter {
 			name = "NONAME";
 		}
 		
-		current++;
+		current = 1;
 		
 		// 每一輪誦經數, 至少兩遍或以上, 如果設定為 1, 則設回 0, 即是不使用.
 		if (roundSize <= 1) {
@@ -122,23 +118,19 @@ public class DbCounter {
         values.put("roundsize", roundSize);
         values.put("name", name);
         values.put("notes", notes);
-        values.put("islast", true);
+        values.put("iscurrent", true);
         values.put("lastupdate", sDateTime);
 
         dbHelper.getDb().insert("counter", null, values);
 	}
 
-	// name: 經文名稱.
+	// 取得目前的 Counter value
 	// Return:
 	//   false = 不存在指定經文名稱的誦經紀錄
 	//   true  = 找到指定經文名稱的誦經紀錄
-	public boolean getCounter(String name) {		
-		if (name == null || name.trim().equals("")) {
-			name = "NONAME";
-		}
-
-		String[] columns = {"_id", "current", "round", "roundsize", "name", "notes", "isLast", "lastupdate"};
-		Cursor cursor = dbHelper.getDb().query("counter", columns, "name = ?", new String[]{name}, null, null, null);
+	public boolean getCounter() {		
+		String[] columns = {"_id", "current", "round", "roundsize", "name", "notes", "iscurrent", "lastupdate"};
+		Cursor cursor = dbHelper.getDb().query("counter", columns, "iscurrent = 1", null, null, null, null);
 		try {
 			if (cursor.moveToFirst()) {								// 如果已有此經文的誦經紀錄
 				this.id = cursor.getInt(ID);
@@ -147,16 +139,6 @@ public class DbCounter {
 				this.roundSize = cursor.getInt(ROUNDSIZE);
 				this.name = cursor.getString(NAME);
 				this.notes = cursor.getString(NOTES);
-				this.isLast = cursor.getInt(ISLAST) > 0;
-				
-				if (name == null || name.trim().equals("")) {
-					name = "NONAME";
-				}
-							
-				// 如果是剛剛轉過來誦此經文, 之前誦的數要取消. (用戶不可以跳來跳去地誦經)
-				if (! this.isLast) {
-					this.current = 0;
-				}
 				
 				try {
 					DateFormat df = new SimpleDateFormat(PrayCounterDbHelper.DATETIMEFORMAT);
@@ -176,4 +158,23 @@ public class DbCounter {
 		return false;
 	}
 	
+	// 設定目前唸誦的經文
+	// name: 經文名稱
+	// 如果唸誦另一經文, 把 counter 設回零, 系統不容許跳來跳去唸誦.
+	public void setCurrent(String name) {
+		// 取得目前唸誦哪一經文
+		getCounter();
+		
+		if (!this.name.equals(name)) {	// 如果切換另一經文
+			resetCounter();
+		}
+		
+		dbHelper.getDb().execSQL("UPDATE counter set iscurrent = 1 where name = '" + name + "'");
+		getCounter();
+	}
+	
+	public void resetCounter() {
+		dbHelper.getDb().execSQL("UPDATE counter set current = 0 where iscurrent = 1");
+		getCounter();
+	}
 }
