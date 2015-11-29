@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,14 +25,16 @@ public class MainActivity extends AppCompatActivity {
 	
 	private boolean debug = false;
 	
-	private int MIN_CLICK_INTERVAL = 1;	// 3 秒鐘之內不能再按.
+	private int MIN_CLICK_INTERVAL = 1;	// 1秒鐘之內不能再按.
 	private Date lastClickTime = new Date();
 	
 	private DbCounter dbCounter;
 	
 	private TextView txtCounter;
 	ComponentName headphoneButtonReceiverComponent;
-	AudioManager audioManager;	
+	AudioManager audioManager;
+	
+	private MusicIntentReceiver myReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		
 		Button btnAddOne = (Button)findViewById(R.id.btnAddOne);
+		
+		headphoneButtonReceiverComponent = new ComponentName(this, EarButtonReceiver.class);
 		
 		if (!debug) {
 			btnAddOne.setVisibility(View.GONE);
@@ -50,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 		txtCounter = (TextView)this.findViewById(R.id.txtCounter);
 		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
 		
+		myReceiver = new MusicIntentReceiver();
+		
 		IntentFilter ifHeadphoneButtonClick = new IntentFilter();
 		ifHeadphoneButtonClick.addAction("KEYCODE_HEADSETHOOK");
 //		ifHeadphoneButtonClick.addAction("EXTRA_VOLUME_STREAM_VALUE");	// 大細聲不加一, 這句指令保留.
@@ -57,10 +64,6 @@ public class MainActivity extends AppCompatActivity {
 		
 		Drawable backImg = getResources().getDrawable(R.drawable.lotus1);
 		backImg.setAlpha(70);
-
-		headphoneButtonReceiverComponent = new ComponentName(this, EarButtonReceiver.class);
-		AudioManager audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
-		audioManager.registerMediaButtonEventReceiver(headphoneButtonReceiverComponent);			
 	}
 	
 	@Override
@@ -74,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 
+	    IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+	    registerReceiver(myReceiver, filter);
+	    
 		dbCounter.getCounter();
 		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
 	}
@@ -118,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
         // Negative
         dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextSize(40);
     }
+	
+	protected void registerEarButtonReceiver() {
+		audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+		audioManager.registerMediaButtonEventReceiver(headphoneButtonReceiverComponent);					
+	}
 
     protected BroadcastReceiver headphoneButtonClickReceiver = new BroadcastReceiver() {
 		@Override
@@ -131,6 +142,28 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
     };
+    
+    private class MusicIntentReceiver extends BroadcastReceiver {
+        @Override public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+                int state = intent.getIntExtra("state", -1);
+                switch (state) {
+                case 0:
+                    Log.d("DEBUG", "Headset is unplugged");
+                    audioManager.unregisterMediaButtonEventReceiver(headphoneButtonReceiverComponent);
+                    
+                    break;
+                case 1:
+                    Log.d("DEBUG", "Headset is plugged");
+            		registerEarButtonReceiver();
+            		
+                    break;
+                default:
+                    Log.d("DEBUG", "I have no idea what the headset state is");
+                }
+            }
+        }
+    }
     
     protected void addOne() {    	
 		int count = dbCounter.addOne();
