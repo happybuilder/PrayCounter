@@ -3,6 +3,8 @@ package edu.praycounter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,6 +16,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	private boolean debug = false;
 	
-	private int MIN_CLICK_INTERVAL = 1;	// 1秒鐘之內不能再按.
+	private int MIN_CLICK_INTERVAL = 500;	// 半秒鐘之內不能再按.
 	private Date lastClickTime = new Date();
 	
 	private DbCounter dbCounter;
@@ -102,6 +105,22 @@ public class MainActivity extends AppCompatActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	public void btnPraySetting_onClick(View view) {
+		// Intent for the activity to open when user selects the notification
+		Intent detailsIntent = new Intent(this, PraySettingActivity.class);
+
+		// Use TaskStackBuilder to build the back stack and get the PendingIntent
+		PendingIntent pendingIntent =
+		        TaskStackBuilder.create(this)
+		                        // add all of DetailsActivity's parents to the stack,
+		                        // followed by DetailsActivity itself
+		                        .addNextIntentWithParentStack(upIntent)
+		                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setContentIntent(pendingIntent);
+	}
 	
 	public void btnAddOne_onClick(View view) {
 		addOne();
@@ -134,8 +153,9 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Date current = new Date();
-			long clickInterval = TimeUnit.MILLISECONDS.toSeconds(
-					current.getTime() - lastClickTime.getTime());
+//			long clickInterval = TimeUnit.MILLISECONDS.toSeconds(
+//					current.getTime() - lastClickTime.getTime());
+			long clickInterval = current.getTime() - lastClickTime.getTime();
 			if (clickInterval > MIN_CLICK_INTERVAL) {
 				lastClickTime = new Date();
 				addOne();

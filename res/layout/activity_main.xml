@@ -11,11 +11,24 @@
         android:orientation="vertical"
         android:layout_gravity="center_vertical" >
 
+        <Button
+            android:id="@+id/btnPraySetting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="#FFCCFFCC"
+            android:onClick="btnPraySetting_onClick"
+            android:textSize="36sp"
+            android:text="@string/to_pray_setting" />
+            
         <TextView
             android:id="@+id/txtCounter"
             android:textSize="160sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center_horizontal" />
 
         <Button
@@ -25,7 +38,6 @@
             android:onClick="btnAddOne_onClick"
             android:text="Add One" />
             
-
 	    <RelativeLayout
 	        android:layout_marginBottom="50dp"
 	        android:layout_width="match_parent"
@@ -35,12 +47,12 @@
 		        android:id="@+id/btnResetCounter"
 		        style="?android:attr/buttonStyleSmall"
 		        android:onClick="btnResetCounter_onClick"
-		        android:textSize="36sp"
+		        android:textSize="30sp"
 		        android:layout_alignParentBottom="true"
 		        android:layout_width="match_parent"
-		        android:layout_height="100sp"
-		        android:layout_marginLeft="30dp"
-		        android:layout_marginRight="30dp"
+		        android:layout_height="80sp"
+		        android:layout_marginLeft="72dp"
+		        android:layout_marginRight="72dp"
 		        android:text="@string/reset_counter" />
 		    	        
 	    </RelativeLayout>	    
