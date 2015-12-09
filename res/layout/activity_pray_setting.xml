@@ -28,33 +28,44 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/btnAddOrSelectPray"
-            android:layout_width="100dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="@string/add_pray" />
+            android:text="@string/btn_add"
+            android:textSize="30sp"
+            android:onClick="btnAddOrSelectPray_onClick" />
 
     </LinearLayout>
     
-    <TextView
-        android:id="@+id/txtRoundSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/layoutRoundSetting"
         android:layout_marginTop="48dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"        
-        android:text="@string/round_size"
-        android:textSize="22sp" />
-
-    <EditText
-	    android:id="@+id/edtRoundSize"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-	    android:inputType="number" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="invisible" >
+        
+	    <TextView
+	        android:id="@+id/txtRoundSize"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/round_size"
+	        android:textSize="22sp" />
+	
+	    <EditText
+		    android:id="@+id/edtRoundSize"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:inputType="number"
+		    android:textSize="30sp" />
+    
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -71,7 +82,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:onClick="btnBack_onClick"
-            android:text="@string/back" />
+            android:text="@string/btn_back"
+            android:textSize="30sp" />
                 
     </RelativeLayout>
 

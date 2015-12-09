@@ -8,10 +8,13 @@ import java.util.Date;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 //import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class DbCounter {
+	
+	public final static String BLANK_PRAY_NAME = "NONAME";
 
 	// Define column index.
 	private final static int ID = 0;
@@ -71,7 +74,7 @@ public class DbCounter {
 
 		// 每輪所誦次數, 至少誦 2 次, 否則代表不使用「輪數」.
 		if (roundSize > 1) {
-			if (current >= roundSize) {	// 如果已誦滿一輪 ...
+			if (current >= roundSize) {		// 如果已誦滿一輪 ...
 				current = 0;				// 重置計數器.
 				round++;					// 輪數加一.
 			}
@@ -93,8 +96,9 @@ public class DbCounter {
         return current;		
 	}
 	
+	// 新增一個經文紀錄, set current = 1
 	public void addOneByInsert(String name, int roundSize, String notes) {
-		// 清除全部紀錄的 is last 旗號.
+		// 清除全部紀錄的 is current 旗號.
 		dbHelper.getDb().execSQL("UPDATE counter set iscurrent = 0");
 
 		SimpleDateFormat sdf = new SimpleDateFormat(PrayCounterDbHelper.DATETIMEFORMAT);
@@ -102,7 +106,7 @@ public class DbCounter {
 		String sDateTime = sdf.format(lastUpdate);
 		
 		if (name == null || name.trim().equals("")) {
-			name = "NONAME";
+			name = BLANK_PRAY_NAME;
 		}
 		
 		current = 1;
@@ -158,6 +162,36 @@ public class DbCounter {
 		return false;
 	}
 	
+	public int getIntFromDb(String tableName, String fieldName, String selectBy, String selectValue){
+	    int selection = 0;
+	    Cursor c = dbHelper.getDb().query(tableName, 
+	    		new String[] {fieldName}, selectBy + "=" + selectValue, null, null, null, null);
+	    if(c.getCount() == 1){
+	        c.moveToFirst();
+	        selection = c.getInt(c.getColumnIndex(fieldName));
+	    }
+	    c.close();
+//	    dbHelper.getDb().close();
+	    Log.d("getIntFromDb", fieldName + "=" + Integer.toString(selection));
+	    return selection;      
+	}
+	
+	// 傳回: DB 有沒有指定經文的誦經紀錄.
+	public boolean isPrayNameExists(String prayName) {
+		Cursor c = dbHelper.getDb().rawQuery(
+				"select count(*) from counter where name = ?", new String[]{prayName} );
+		c.moveToFirst();		
+		return c.getInt(0) > 0;
+	}
+	
+	// 傳回: DB 是否沒有任何具名誦經紀錄 (NONAME 是不具名紀錄).
+	public boolean isPrayNameDbEmpty() {
+		Cursor c = dbHelper.getDb().rawQuery(
+				"select count(*) from counter where name <> ?", new String[]{BLANK_PRAY_NAME} );
+		c.moveToFirst();		
+		return c.getInt(0) == 0;
+	}
+	
 	// 設定目前唸誦的經文
 	// name: 經文名稱
 	// 如果唸誦另一經文, 把 counter 設回零, 系統不容許跳來跳去唸誦.
@@ -177,4 +211,5 @@ public class DbCounter {
 		dbHelper.getDb().execSQL("UPDATE counter set current = 0 where iscurrent = 1");
 		getCounter();
 	}
+
 }
