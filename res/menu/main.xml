@@ -9,6 +9,14 @@
         android:title="@string/action_settings"
         android:titleCondensed="@string/action_settings"
         android:icon="@drawable/ic_settings_white_24dp"
+        app:showAsAction="ifRoom"/>
+    
+    <item
+        android:id="@+id/menu_title_activity_pray_list"
+        android:orderInCategory="110"
+        android:title="@string/title_activity_pray_list"
+        android:titleCondensed="@string/title_activity_pray_list"
+        android:icon="@drawable/ic_settings_white_24dp"
         app:showAsAction="always"/>
     
 </menu>

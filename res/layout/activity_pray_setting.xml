@@ -32,12 +32,12 @@
             android:textSize="30sp" />
 
         <Button
-            android:id="@+id/btnAddOrSelectPray"
+            android:id="@+id/btnSelectPray"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="@string/btn_add"
+            android:text="@string/btn_select"
             android:textSize="30sp"
-            android:onClick="btnAddOrSelectPray_onClick" />
+            android:onClick="btnSelectPray_onClick" />
 
     </LinearLayout>
     

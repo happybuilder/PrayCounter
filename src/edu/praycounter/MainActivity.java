@@ -26,14 +26,19 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 	
-	private boolean debug = false;
+	private final int PRAY_SETTING = 1;
+	private final int PRAY_LIST = 2;
+	
+	private boolean debug = true;
 	
 	private int MIN_CLICK_INTERVAL = 500;	// 半秒鐘之內不能再按.
 	private Date lastClickTime = new Date();
 	
-	private DbCounter dbCounter;
+	private PrayCounterDb dbCounter;
+	private CounterBean counter;
 	
 	private TextView txtCounter;
+	private Button btnPraySetting;
 	ComponentName headphoneButtonReceiverComponent;
 	AudioManager audioManager;
 	
@@ -44,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		counter = new CounterBean();
+		
+		btnPraySetting = (Button)findViewById(R.id.btnPraySetting);
 		Button btnAddOne = (Button)findViewById(R.id.btnAddOne);
 		
 		headphoneButtonReceiverComponent = new ComponentName(this, EarButtonReceiver.class);
@@ -52,17 +60,17 @@ public class MainActivity extends AppCompatActivity {
 			btnAddOne.setVisibility(View.GONE);
 		}
 		
-		dbCounter = new DbCounter(this);
+		dbCounter = new PrayCounterDb(this, counter);
 		
 		// Init counter
 		txtCounter = (TextView)this.findViewById(R.id.txtCounter);
-		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
+		txtCounter.setText(Integer.toString(counter.getCurrent()));
 		
 		myReceiver = new MusicIntentReceiver();
 		
 		IntentFilter ifHeadphoneButtonClick = new IntentFilter();
 		ifHeadphoneButtonClick.addAction("KEYCODE_HEADSETHOOK");
-//		ifHeadphoneButtonClick.addAction("EXTRA_VOLUME_STREAM_VALUE");	// 大細聲不加一, 這句指令保留.
+//		ifHeadphoneButtonClick.addAction("EXTRA_VOLUME_STREAM_VALUE");	// 大細聲不加一 (這句指令保留).
 		this.registerReceiver(headphoneButtonClickReceiver, ifHeadphoneButtonClick);
 		
 		Drawable backImg = getResources().getDrawable(R.drawable.lotus1);
@@ -83,14 +91,15 @@ public class MainActivity extends AppCompatActivity {
 	    IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
 	    registerReceiver(myReceiver, filter);
 	    
-		dbCounter.getCounter();
-		txtCounter.setText(Integer.toString(dbCounter.getCurrent()));
+		dbCounter.checkoutCurrentCounter();
+		updateScreen();
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
+		unregisterReceiver(myReceiver);
 //		audioManager.unregisterMediaButtonEventReceiver(headphoneButtonReceiverComponent);	
 	}
 
@@ -103,12 +112,36 @@ public class MainActivity extends AppCompatActivity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
+		else if (id == R.id.menu_title_activity_pray_list) {
+			Intent intent = new Intent(this, PrayListActivity.class);
+			startActivityForResult(intent, PRAY_LIST);
+			return true;
+		}
+		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		if (requestCode == PRAY_SETTING) {
+//			if (resultCode == RESULT_OK) {
+//
+//			}
+//		}
 	}
 
 	public void btnPraySetting_onClick(View view) {
 		Intent intent = new Intent(this, PraySettingActivity.class);
-		startActivity(intent);
+		intent.putExtra("id", counter.id);
+		intent.putExtra("current", counter.current);
+		intent.putExtra("round", counter.round);
+		intent.putExtra("roundSize", counter.roundSize);
+		intent.putExtra("name", counter.name);
+		intent.putExtra("notes", counter.notes);
+		intent.putExtra("isCurrent", counter.isCurrent);
+		intent.putExtra("lastUpdate", PrayCounterDbHelper.dateToString(counter.lastUpdate));
+		
+		startActivityForResult(intent, PRAY_SETTING);
 	}
 	
 	public void btnAddOne_onClick(View view) {
@@ -142,8 +175,6 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Date current = new Date();
-//			long clickInterval = TimeUnit.MILLISECONDS.toSeconds(
-//					current.getTime() - lastClickTime.getTime());
 			long clickInterval = current.getTime() - lastClickTime.getTime();
 			if (clickInterval > MIN_CLICK_INTERVAL) {
 				lastClickTime = new Date();
@@ -175,13 +206,13 @@ public class MainActivity extends AppCompatActivity {
     }
     
     protected void addOne() {    	
-		int count = dbCounter.addOne();
-		txtCounter.setText(Integer.toString(count));	    	
+		dbCounter.addOne();
+		updateScreen();	    	
     }
     
     protected void resetCounter() {
-    	dbCounter.resetCounter();
-		txtCounter.setText(Integer.toString(0));	    	
+    	dbCounter.resetAllCounter();
+		updateScreen();	    	
     }
     
     DialogInterface.OnClickListener confirmResetDialogClickListener = new DialogInterface.OnClickListener() {
@@ -199,4 +230,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void updateScreen() {
+    	int count = counter.getCurrent();
+    	String prayName = counter.getName().equals(PrayCounterDbHelper.BLANK_PRAY_NAME) ? "輸入經文名稱" : counter.getName();
+    	btnPraySetting.setText(prayName);
+    	txtCounter.setText(Integer.toString(count));
+    }
 }
