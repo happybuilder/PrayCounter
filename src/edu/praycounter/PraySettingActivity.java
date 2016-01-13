@@ -32,16 +32,17 @@ public class PraySettingActivity extends AppCompatActivity {
 	
 	private EditText edtPrayName;
 	private Button btnAddOrSelectPray;
-	private LinearLayout layoutRoundSetting;
+	private EditText edtRoundSize;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pray_setting);
 
+		// Components.
 		edtPrayName = (EditText) findViewById(R.id.edtPrayName);
 		btnAddOrSelectPray = (Button) findViewById(R.id.btnSelectPray);
-		layoutRoundSetting = (LinearLayout) findViewById(R.id.layoutRoundSetting);
+		edtRoundSize = (EditText) findViewById(R.id.edtRoundSize);
 		
 		// Get counter from bundle.
 		counter = new CounterBean();
@@ -53,8 +54,14 @@ public class PraySettingActivity extends AppCompatActivity {
 		counter.notes = getIntent().getExtras().getString("notes");
 		counter.lastUpdate = PrayCounterDbHelper.stringToDate(getIntent().getExtras().getString("lastUpdate"));
 
-		dbCounter = new PrayCounterDb(this, counter);
+		// Init screen value from bundle.
+		edtPrayName.setText(getDisplayPrayName(counter.name));
+		edtRoundSize.setText(getDisplayRoundSize(counter.roundSize));
 
+		// DB Module.
+		dbCounter = new PrayCounterDb(this, counter);
+		
+		// Event
 		edtPrayName.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -69,20 +76,23 @@ public class PraySettingActivity extends AppCompatActivity {
 		});
 		 
 //		edtPrayName.addTextChangedListener(new TextWatcher() {
-//
 //			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 //			}
 //
 //			public void afterTextChanged(Editable s) {
-//				// you can call or do what you want with your EditText here
-//				mode = anaMode(edtPrayName.getText().toString());
-//				updateBtnAddOrSelectPrayState();
+//				if (edtPrayName.getText().toString().trim().equals("")) {
+//					layoutRoundSetting.setVisibility(View.INVISIBLE);			
+//				} 
+//				else {
+//					layoutRoundSetting.setVisibility(View.VISIBLE);
+//				}
 //			}
 //
 //			public void onTextChanged(CharSequence s, int start, int before, int count) {
 //			}
 //		});
-	}
+
+	}	// end onCreate(...)
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,6 +150,24 @@ public class PraySettingActivity extends AppCompatActivity {
 		finish();		
 	}
 	
+	private String getDisplayPrayName(String prayName) {
+		if (prayName.trim().equals(PrayCounterDbHelper.BLANK_PRAY_NAME)) {
+			return "";
+		}
+		else {
+			return prayName.trim();
+		}
+	}
+	
+	private String getDisplayRoundSize(int roundSize) {
+		if (roundSize == 0) {
+			return "";
+		}
+		else {
+			return Integer.toString(roundSize);
+		}
+	}
+	
 	private void gatherSetting() {
 		String prayName = edtPrayName.getText().toString().trim();
 		if (prayName.equals("")) {
@@ -148,14 +176,14 @@ public class PraySettingActivity extends AppCompatActivity {
 		
 		counter.isCurrent = true;
 		counter.name = prayName;
-		counter.roundSize = 0; // TODO
+		counter.roundSize = Integer.parseInt(edtRoundSize.getText().toString());
 		counter.notes = "";		// TODO
 	}
 	
 	private void addOrUpdatePray() {
 		switch (anaMode(counter.name)) {
 			case ADD:
-				addPray(counter.name);
+				addPray();
 				break;
 			case UPDATE:
 				dbCounter.updatePray();
@@ -209,17 +237,13 @@ public class PraySettingActivity extends AppCompatActivity {
 		String btnAddText = getResources().getString(R.string.btn_add);
 		edtPrayName.setText("");
 		btnAddOrSelectPray.setText(btnAddText);
-		layoutRoundSetting.setVisibility(View.INVISIBLE);					
 	}
 	
 	// 新增經文紀錄.
-	private void addPray(String prayName) {
+	private void addPray() {
 		// initial counter
-		counter.current = 0;
 		long id = dbCounter.insertPray();
 		dbCounter.setCurrent(id);
-		
-		layoutRoundSetting.setVisibility(View.VISIBLE);
 	}
 	
 }
