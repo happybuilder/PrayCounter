@@ -140,6 +140,25 @@ public class PrayCounterDb {
         }
 	}
 	
+	public long getCounterId(String prayName) {
+		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try {
+			Cursor c = db.rawQuery("select _id from counter where name = ?", 
+					new String[]{prayName} );
+			c.moveToFirst();
+			try {
+				return c.getInt(0);
+			}
+			finally {
+				c.close();
+			}
+        }
+        finally {
+        	db.close();
+        }
+	}
+	
 	// 取得目前的經文 ID.
 	public long getCurrentId() {
 		String[] columns = {"currentId"};
@@ -222,15 +241,15 @@ public class PrayCounterDb {
 	}
 	
 	// 傳回: DB 是否沒有任何具名誦經紀錄 (NONAME 是不具名紀錄).
-	public boolean isPrayNameDbEmpty() {
+	public boolean isPrayNameOnlyNoName() {
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-			Cursor c = db.rawQuery("select count(*) from counter where name <> ?", 
+			Cursor c = db.rawQuery("select count(*) from counter where name = ?", 
 					new String[]{PrayCounterDbHelper.BLANK_PRAY_NAME} );
 			c.moveToFirst();		
 			try {
-				return c.getInt(0) == 0;
+				return c.getInt(0) == 1;	
 			}
 			finally {
 				c.close();
@@ -243,17 +262,16 @@ public class PrayCounterDb {
 	
 	// 設定目前唸誦的經文
 	// name: 經文名稱
-	// 如果唸誦另一經文, 把 counter 設回零, 系統不容許跳來跳去唸誦.
+	// 如果唸誦另一經文, 把 counter 設回零, 系統不鼓勵跳來跳去唸誦.
 	public void setCurrent(long currentId) {
-		if (getCurrentId() != currentId) {	// 如果切換另一經文
-			resetAllCounter();
-			
+		if (getCurrentId() != currentId) {	// 如果切換另一經文			
 			PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
 	        SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        try {
 				ContentValues values = new ContentValues();
 				values.put("currentid", currentId);			
 				db.update("status", values, null, null);
+				resetAllCounter();
 	        }
 	        finally {
 	        	db.close();

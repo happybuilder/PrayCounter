@@ -1,33 +1,25 @@
 package edu.praycounter;
 
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 public class PraySettingActivity extends AppCompatActivity {
 
 	public enum Mode {
-		ADD, UPDATE, NONE
+		ADD, CHANGE_CURRENT, NONE
 	}
 
 //	public Mode mode = Mode.CLEAR;
 
-	private PrayCounterDb dbCounter;
+	private PrayCounterDb prayCounterDb;
 	private CounterBean counter;
 	
 	private EditText edtPrayName;
@@ -59,16 +51,21 @@ public class PraySettingActivity extends AppCompatActivity {
 		edtRoundSize.setText(getDisplayRoundSize(counter.roundSize));
 
 		// DB Module.
-		dbCounter = new PrayCounterDb(this, counter);
+		prayCounterDb = new PrayCounterDb(this, counter);
 		
 		// Event
 		edtPrayName.setOnFocusChangeListener(new OnFocusChangeListener() {
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				/*
-				 * When focus is lost check that the text field has valid
-				 * values.
-				 */
+			public void onFocusChange(View v, boolean hasFocus) {	// on lost focus.
+				if (!hasFocus) {
+					addOrUpdatePray();
+				}
+			}
+		});
+		
+		edtRoundSize.setOnFocusChangeListener(new OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {	// on lost focus.
 				if (!hasFocus) {
 					addOrUpdatePray();
 				}
@@ -131,8 +128,7 @@ public class PraySettingActivity extends AppCompatActivity {
 	}
 	
 	private void navigateBack() {		
-		gatherSetting();
-		dbCounter.updatePray();
+		addOrUpdatePray();
 		
 //		Intent intent = new Intent();
 //		intent.putExtra("id", counter.id);
@@ -176,17 +172,28 @@ public class PraySettingActivity extends AppCompatActivity {
 		
 		counter.isCurrent = true;
 		counter.name = prayName;
-		counter.roundSize = Integer.parseInt(edtRoundSize.getText().toString());
+		counter.roundSize = StringUtils.parseInt(edtRoundSize);
 		counter.notes = "";		// TODO
 	}
 	
-	private void addOrUpdatePray() {
+	private void addOrUpdatePray() {		
+		gatherSetting();
 		switch (anaMode(counter.name)) {
 			case ADD:
-				addPray();
+				if (prayCounterDb.isPrayNameOnlyNoName()) {
+					prayCounterDb.updatePray();	
+				}
+				else {
+					Log.d("debug", "addOrUpdatePray(), addPray");
+					addPray();
+				}
 				break;
-			case UPDATE:
-				dbCounter.updatePray();
+			case CHANGE_CURRENT:
+				counter.id = prayCounterDb.getCounterId(edtPrayName.getText().toString());
+				Log.d("debug", "addOrUpdatePray(), CHANGE_CURRENT, id:" + counter.id);
+				prayCounterDb.setCurrent(counter.id);
+				gatherSetting();
+				prayCounterDb.updatePray();
 				break;
 			default: // NONE
 				break;
@@ -198,15 +205,11 @@ public class PraySettingActivity extends AppCompatActivity {
 		if (prayName == null || prayName.trim().equals("")) {
 			return Mode.NONE;
 		} else {
-			if (dbCounter.isPrayNameDbEmpty()) {
-				return Mode.ADD;
+			if (prayCounterDb.isPrayNameExists(prayName)) {
+				return Mode.CHANGE_CURRENT;
 			} else {
-				if (dbCounter.isPrayNameExists(prayName)) {
-					return Mode.UPDATE;
-				} else {
-					return Mode.ADD;
-				}
-			}			
+				return Mode.ADD;
+			}
 		}
 	}
 
@@ -242,8 +245,8 @@ public class PraySettingActivity extends AppCompatActivity {
 	// 新增經文紀錄.
 	private void addPray() {
 		// initial counter
-		long id = dbCounter.insertPray();
-		dbCounter.setCurrent(id);
+		long id = prayCounterDb.insertPray();
+		prayCounterDb.setCurrent(id);
 	}
 	
 }
