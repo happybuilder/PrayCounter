@@ -10,16 +10,27 @@ import android.database.sqlite.SQLiteDatabase;
 public class PrayCounterDb {
 	
 	// Define column index.
-	private final static int ID = 0;
-	private final static int CURRENT = 1;
-	private final static int ROUND = 2;
-	private final static int ROUNDSIZE = 3;
-	private final static int NAME = 4;
-	private final static int NOTES = 5;
-	private final static int LASTUPDATE = 6;
+//	private final static int ID = 0;
+//	private final static int CURRENT = 1;
+//	private final static int ROUND = 2;
+//	private final static int ROUNDSIZE = 3;
+//	private final static int NAME = 4;
+//	private final static int NOTES = 5;
+//	private final static int LASTUPDATE = 6;
 	
 	private Context context;
 	public CounterBean counter;
+	
+	public final static String TABLE_COUNTER = "counter";	
+	public final static String COL_CURRENT = "current";
+	public final static String COL_ROUND = "round";
+	public final static String COL_ROUNDSIZE = "roundsize";
+	public final static String COL_NAME = "name";
+	public final static String COL_NOTES = "notes";
+	public final static String COL_LASTUPDATE = "lastupdate";
+	
+	public final static String TABLE_STATUS = "status";
+	public final static String COL_CURRENT_ID = "currentid";
 	
 	public PrayCounterDb(Context context, CounterBean counter) {
 		this.context = context;
@@ -62,16 +73,16 @@ public class PrayCounterDb {
         try {
             ContentValues values = new ContentValues();
             values.put("_id", counter.id);
-            values.put("current", counter.current);
-            values.put("round", counter.round);
-            values.put("lastupdate", PrayCounterDbHelper.dateToString(counter.lastUpdate));
-            db.update("counter", values, "_id = ?", new String[]{Long.toString(counter.id)});
+            values.put(COL_CURRENT, counter.current);
+            values.put(COL_ROUND, counter.round);
+            values.put(COL_LASTUPDATE, PrayCounterDbHelper.dateToString(counter.lastUpdate));
+            db.update(TABLE_COUNTER, values, "_id = ?", new String[]{Long.toString(counter.id)});
 
             // Set to current.
             values.clear();
-            values.put("currentid", counter.id);
-            values.put("lastupdate", PrayCounterDbHelper.dateToString(counter.lastUpdate));        
-            db.update("status", values, null, null);		// "status" table 只有一個 record, 無需設定 where clause.            
+            values.put(COL_CURRENT_ID, counter.id);
+            values.put(COL_LASTUPDATE, PrayCounterDbHelper.dateToString(counter.lastUpdate));        
+            db.update(TABLE_STATUS, values, null, null);		// "status" table 只有一個 record, 無需設定 where clause.            
         }
         finally {
         	db.close();
@@ -97,17 +108,17 @@ public class PrayCounterDb {
 		String sLastUpdate = PrayCounterDbHelper.dateToString(lastUpdate);
 
 		ContentValues values = new ContentValues();
-        values.put("current", counter.current);
-        values.put("round", counter.round);
-        values.put("roundsize", counter.roundSize);
-        values.put("name", counter.name);
-        values.put("notes", counter.notes);
-        values.put("lastupdate", sLastUpdate);
+        values.put(COL_CURRENT, counter.current);
+        values.put(COL_ROUND, counter.round);
+        values.put(COL_ROUNDSIZE, counter.roundSize);
+        values.put(COL_NAME, counter.name);
+        values.put(COL_NOTES, counter.notes);
+        values.put(COL_LASTUPDATE, sLastUpdate);
 
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-	        counter.id = db.insert("counter", null, values);
+	        counter.id = db.insert(TABLE_COUNTER, null, values);
 	        counter.lastUpdate = lastUpdate;
         }
         finally {
@@ -122,17 +133,17 @@ public class PrayCounterDb {
 		String sLastUpdate = PrayCounterDbHelper.dateToString(lastUpdate);
 
 		ContentValues values = new ContentValues();
-        values.put("current", counter.current);
-        values.put("round", counter.round);
-        values.put("roundsize", counter.roundSize);
-        values.put("name", counter.name);
-        values.put("notes", counter.notes);
-        values.put("lastupdate", sLastUpdate);
+        values.put(COL_CURRENT, counter.current);
+        values.put(COL_ROUND, counter.round);
+        values.put(COL_ROUNDSIZE, counter.roundSize);
+        values.put(COL_NAME, counter.name);
+        values.put(COL_NOTES, counter.notes);
+        values.put(COL_LASTUPDATE, sLastUpdate);
 
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-	        counter.id = db.update("counter", values, "_id=" + counter.id, null);
+	        counter.id = db.update(TABLE_COUNTER, values, "_id=" + counter.id, null);
 	        counter.lastUpdate = lastUpdate;
         }
         finally {
@@ -144,6 +155,9 @@ public class PrayCounterDb {
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
+        	if (prayName.equals("")) {
+        		prayName = PrayCounterDbHelper.BLANK_PRAY_NAME;
+        	}
 			Cursor c = db.rawQuery("select _id from counter where name = ?", 
 					new String[]{prayName} );
 			c.moveToFirst();
@@ -161,12 +175,12 @@ public class PrayCounterDb {
 	
 	// 取得目前的經文 ID.
 	public long getCurrentId() {
-		String[] columns = {"currentId"};
+		String[] columns = {COL_CURRENT_ID};
 		
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-        	Cursor cursor = db.query("status", columns, null, null, null, null, null);
+        	Cursor cursor = db.query(TABLE_STATUS, columns, null, null, null, null, null);
 			try {
 				if (cursor.moveToFirst()) {
 					return cursor.getLong(0);
@@ -189,22 +203,22 @@ public class PrayCounterDb {
 	//   false = 不存在指定經文名稱的誦經紀錄
 	//   true  = 找到指定經文名稱的誦經紀錄
 	public boolean checkoutCurrentCounter() {
-		String[] columns = {"_id", "current", "round", "roundsize", "name", "notes", "lastupdate"};
+		String[] columns = {"_id", COL_CURRENT, COL_ROUND, COL_ROUNDSIZE, COL_NAME, COL_NOTES, COL_LASTUPDATE};
         
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-			Cursor cursor = db.query("counter", columns, "_id = " + getCurrentId(), 
+			Cursor cursor = db.query(TABLE_COUNTER, columns, "_id = " + getCurrentId(), 
 					null, null, null, null);
 			try {
 				if (cursor.moveToFirst()) {								// 如果已有此經文的誦經紀錄
-					counter.id = cursor.getInt(ID);
-					counter.current = cursor.getInt(CURRENT);
-					counter.round = cursor.getInt(ROUND);
-					counter.roundSize = cursor.getInt(ROUNDSIZE);
-					counter.name = cursor.getString(NAME);
-					counter.notes = cursor.getString(NOTES);
-					counter.lastUpdate = PrayCounterDbHelper.stringToDate(cursor.getString(LASTUPDATE));
+					counter.id = cursor.getInt(cursor.getColumnIndex("_id"));
+					counter.current = cursor.getInt(cursor.getColumnIndex(COL_CURRENT));
+					counter.round = cursor.getInt(cursor.getColumnIndex(COL_ROUND));
+					counter.roundSize = cursor.getInt(cursor.getColumnIndex(COL_ROUNDSIZE));
+					counter.name = cursor.getString(cursor.getColumnIndex(COL_NAME));
+					counter.notes = cursor.getString(cursor.getColumnIndex(COL_NOTES));
+					counter.lastUpdate = PrayCounterDbHelper.stringToDate(cursor.getString(cursor.getColumnIndex(COL_LASTUPDATE)));
 					
 					return true;
 				}
@@ -269,8 +283,8 @@ public class PrayCounterDb {
 	        SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        try {
 				ContentValues values = new ContentValues();
-				values.put("currentid", currentId);			
-				db.update("status", values, null, null);
+				values.put(COL_CURRENT_ID, currentId);			
+				db.update(TABLE_STATUS, values, null, null);
 				resetAllCounter();
 	        }
 	        finally {
@@ -291,4 +305,12 @@ public class PrayCounterDb {
         }
 	}
 
+	public Cursor queryPrayInfo() {
+		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        
+		String[] columns = {"_id", COL_NAME, COL_ROUND, COL_ROUNDSIZE, COL_NOTES};
+    	Cursor cursor = db.query(TABLE_COUNTER, columns, null, null, null, null, null);
+		return cursor;
+	}
 }

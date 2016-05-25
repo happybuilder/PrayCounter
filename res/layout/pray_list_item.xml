@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:background="@drawable/pray_list_item_gradient"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/pray_name"
+    	android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="20dp"
+        android:textSize="40sp" >
+    </TextView>
+    
+    <TextView
+        android:id="@+id/round_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:textSize="40sp" >
+    </TextView>
+
+</LinearLayout>

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+	    Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+	    setSupportActionBar(myToolbar);
+		
 		counter = new CounterBean();
 		
 		btnPraySetting = (Button)findViewById(R.id.btnPraySetting);
@@ -80,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 //		audioManager.unregisterMediaButtonEventReceiver(headphoneButtonReceiverComponent);	
 	}
 
+	// Menu UI setting on /res/menu/main.xml
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -168,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	protected void registerEarButtonReceiver() {
 		audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+		Log.d("DEBUG", "Reg receiver.");
 		audioManager.registerMediaButtonEventReceiver(headphoneButtonReceiverComponent);					
 	}
 
@@ -189,8 +195,10 @@ public class MainActivity extends AppCompatActivity {
                 int state = intent.getIntExtra("state", -1);
                 switch (state) {
                 case 0:
-                    Log.d("DEBUG", "Headset is unplugged");
-                    audioManager.unregisterMediaButtonEventReceiver(headphoneButtonReceiverComponent);
+                	if (audioManager != null) {
+	                    Log.d("DEBUG", "Headset is unplugged, unReg Receiver.");
+	                    audioManager.unregisterMediaButtonEventReceiver(headphoneButtonReceiverComponent);
+                	}
                     
                     break;
                 case 1:

@@ -1,24 +1,27 @@
 package edu.praycounter;
 
-import android.support.v7.app.ActionBarActivity;
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class PrayListActivity extends ActionBarActivity {
+// 用 AppCompatActivity 比單用 Activity 多了 Tool Bar (App Bar) 的功能.
+//   Ref: https://developer.android.com/training/appbar/setting-up.html
+public class PrayListActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pray_list);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_praylist);
+//        setSupportActionBar(toolbar);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.pray_list, menu);
+		getMenuInflater().inflate(R.menu.pray_list_menu, menu);
 		return true;
 	}
 
@@ -31,19 +34,6 @@ public class PrayListActivity extends ActionBarActivity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
-		else if (id == android.R.id.home) {
-			navigateBack();
-			return true;
-		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	private void navigateBack() {		
-//		Intent intent = new Intent();
-//		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//		setResult(Activity.RESULT_OK, intent);
-		
-		finish();		
-	}
-	
 }
