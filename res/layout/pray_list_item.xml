@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="100dp"
     android:orientation="horizontal"
-    android:background="@drawable/pray_list_item_gradient"
+    android:background="@color/olivedrab"
     android:gravity="center">
 
     <TextView
