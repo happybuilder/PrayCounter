@@ -1,0 +1,75 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/lotus1"
+    tools:context="edu.wisdom.praycounter2.MainActivity" >
+
+    <include
+        android:id="@+id/toolbar_main"
+        layout="@layout/toolbar_default"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btnPraySetting"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="120dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@color/md_green_200"
+            android:onClick="btnPraySetting_onClick"
+            android:textSize="36sp"
+            android:textColor="@color/black"
+            android:text="@string/to_pray_setting" />
+
+        <TextView
+            android:id="@+id/txtCounter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:includeFontPadding="false"
+            android:gravity="center_horizontal" />
+
+        <Button
+            android:id="@+id/btnAddOneTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="btnAddOneTest_onClick"
+            android:background="@color/md_blue_200"
+            android:textColor="@color/color_main_text"
+            android:visibility="invisible"
+            android:text="Add One" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <Button
+            android:id="@+id/btnResetCounter"
+            style="?android:attr/buttonStyleSmall"
+            android:onClick="btnResetCounter_onClick"
+            android:textSize="25sp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="80sp"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="50dp"
+            android:background="@color/md_green_200"
+            android:textColor="@color/color_main_text"
+            android:text="@string/reset_counter" />
+
+    </RelativeLayout>
+
+</FrameLayout>

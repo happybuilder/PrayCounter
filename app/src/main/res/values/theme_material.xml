@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 連接到 AndroidManifest.xml -->
+    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
+    </style>
+
+    <!-- 各API通用的基底theme -->
+    <style name="MyMaterialTheme.Base" parent="Theme.AppCompat">
+        <!-- 不使用 ActionBar 了,因為改用Toolbar -->
+        <item name="windowNoTitle">true</item>
+        <!-- 不需要 ActionBar 了,因為改用Toolbar -->
+        <item name="windowActionBar">false</item>
+        <!-- Toolbar 背景色 -->
+        <item name="colorPrimary">@color/color_appBar_Bg</item>
+        <!-- Toolbar 前景色(文字色) -->
+        <item name="android:textColorPrimary">@color/color_appBar_Text</item>
+        <!-- 狀態欄背景色 -->
+        <item name="colorPrimaryDark">@color/color_statusBar_Bg</item>
+        <!-- theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/color_control</item>
+
+        <!-- 其他可用項目 colorControlNormal, colorControlActivated, colorControlHighlight, colorSwitchThumbNormal -->
+    </style>
+
+</resources>

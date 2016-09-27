@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        praycounter_release {
+            keyAlias 'praycounter'
+            keyPassword 'tvcwisdom'
+            storeFile file('D:/Android_workspace/PrayCounter Workshop/key/android.jks')
+            storePassword 'tvc90136144'
+        }
+    }
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+    defaultConfig {
+        applicationId "edu.wisdom.praycounter2"
+        minSdkVersion 10
+        targetSdkVersion 23
+        versionCode 4
+        versionName '1.1.1'
+    }
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.praycounter_release
+            proguardFile 'D:/Android_workspace/proguard5.2/src/proguard/gradle/ProGuardTask.java'
+        }
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+}

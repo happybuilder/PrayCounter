@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Button Text -->
+    <string name="btn_add">新增</string>
+    <string name="btn_select">選擇</string>
+    <string name="btn_clear">清空</string>
+    <string name="btn_back">返回</string>
+
+    <!-- Dialog -->
+    <string name="title_add_new_pray">新增經文</string>
+    <string name="btn_confirm">確定</string>
+    <string name="btn_cancel">取消</string>
+    <string name="app_name">誦經計數機</string>
+    <string name="main_title">誦經計數機</string>
+    <string name="reset_counter">重設回零</string>
+    <string name="round_full">完  成</string>
+    <string name="select_pray">選擇經文</string>
+    <string name="pray_name">經文名稱</string>
+    <string name="round_size">每一輪唸誦多少遍</string>
+    <string name="title_activity_pray_setting">設定經文</string>
+    <string name="to_pray_setting">經文名稱</string>
+    <string name="title_activity_pray_list">經文一覽</string>
+
+    <!-- Menu -->
+    <string name="action_settings">設定</string>
+    <string name="action_list">誦經紀錄</string>
+    <string name="title_activity_pray_list2">PrayList2Activity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:drawable="@drawable/pray_list_item_gradient_1"
+        android:id="@+id/pray_list_item_gradient_1" />
+    <item
+        android:drawable="@drawable/pray_list_item_gradient_2"
+        android:id="@+id/pray_list_item_gradient_2"
+        android:top="50dp" />
+</layer-list>

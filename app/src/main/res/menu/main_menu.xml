@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edu.praycounter.MainActivity" >
+
+    <item
+        android:id="@+id/menu_title_activity_pray_list"
+        android:orderInCategory="110"
+        android:title="@string/title_activity_pray_list"
+        android:titleCondensed="@string/title_activity_pray_list"
+        android:icon="@drawable/ic_settings_white_24dp"
+        app:showAsAction="always"/>
+    
+</menu>

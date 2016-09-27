@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.Android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/lotus1"
+    android:orientation="vertical"
+    tools:context="edu.wisdom.praycounter2.PrayListActivity" >
+
+    <android.support.v7.widget.Toolbar
+	    android:id="@+id/toolbar_praylist"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#ff00ff00"
+	    app:contentInsetEnd="0dp"
+	    app:contentInsetStart="0dp" />
+
+	<fragment android:name="edu.wisdom.praycounter2.PrayListFragment"
+	    android:id="@+id/frag_pray_list"
+	    android:layout_weight="1"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp" />
+
+
+</LinearLayout>
