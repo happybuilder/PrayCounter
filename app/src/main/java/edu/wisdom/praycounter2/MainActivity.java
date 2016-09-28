@@ -23,10 +23,12 @@ import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
 		Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_main);
 		myToolbar.setTitle("誦經計數機 " + BuildConfig.VERSION_NAME);
+		myToolbar.inflateMenu(R.menu.main_menu);
+
 //	    setSupportActionBar(myToolbar);
 
 		counter = new CounterBean();
@@ -151,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 		this.mShortPlayer = null;
 	}
 
-	// Menu UI setting on /res/menu/main.xml
+	// Menu UI setting on /res/menu/main_menu.xml
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -356,5 +360,13 @@ public class MainActivity extends AppCompatActivity {
 			btnResetCounter.setText(getResources().getString(R.string.reset_counter));
 			btnResetCounter.setTextColor(getResources().getColor(R.color.color_main_text));
 		}
+	}
+
+	public void showActionMenuItem(MenuItem menu) {
+		View menuItemView = findViewById(R.id.action_menu);
+		PopupMenu popup = new PopupMenu(this, menuItemView);
+		MenuInflater inflate = popup.getMenuInflater();
+		inflate.inflate(R.menu.main_menu_items, popup.getMenu());
+		popup.show();
 	}
 }
