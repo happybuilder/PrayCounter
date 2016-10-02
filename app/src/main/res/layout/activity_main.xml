@@ -70,6 +70,31 @@
             android:textColor="@color/color_main_text"
             android:text="@string/reset_counter" />
 
+        <Button
+            android:id="@+id/btnSoundTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btnResetCounter"
+            android:onClick="btnSoundTest_onClick"
+            android:background="@color/md_blue_200"
+            android:textColor="@color/color_main_text"
+            android:visibility="invisible"
+            android:enabled="false"
+            android:text="Sound Test" />
+
+        <Button
+            android:id="@+id/btnSoundTestStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btnResetCounter"
+            android:layout_toRightOf="@id/btnSoundTest"
+            android:onClick="btnSoundStop_onClick"
+            android:background="@color/md_blue_200"
+            android:textColor="@color/color_main_text"
+            android:visibility="invisible"
+            android:enabled="false"
+            android:text="Sound Stop" />
+
     </RelativeLayout>
 
 </FrameLayout>

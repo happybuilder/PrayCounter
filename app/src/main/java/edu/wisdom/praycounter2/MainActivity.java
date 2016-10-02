@@ -1,11 +1,8 @@
 package edu.wisdom.praycounter2;
 
+import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,14 +12,12 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
-import android.media.SoundPool;
+import android.media.MediaPlayer;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -58,19 +53,20 @@ public class MainActivity extends AppCompatActivity {
 	private TextView txtCompleted;
 	private Button btnPraySetting;
 	private Button btnResetCounter;
+	private Button btnSoundTest;
 	ComponentName headphoneButtonReceiverComponent;
 	AudioManager audioManager;
 
 	private MusicIntentReceiver myReceiver;
 	boolean roundFull;
 
-	private SoundPool mShortPlayer = null;
-	private HashMap mSounds = new HashMap();
 	/**
 	 * ATTENTION: This was auto-generated to implement the App Indexing API.
 	 * See https://g.co/AppIndexing/AndroidStudio for more information.
 	 */
 	private GoogleApiClient client;
+
+	MediaPlayer player;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,12 +107,17 @@ public class MainActivity extends AppCompatActivity {
 		Drawable backImg = getResources().getDrawable(R.drawable.lotus1);
 		backImg.setAlpha(70);
 
-		this.mShortPlayer = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
-		mSounds.put(R.raw.completed, this.mShortPlayer.load(this, R.raw.completed, 1));
-
 		// ATTENTION: This was auto-generated to implement the App Indexing API.
 		// See https://g.co/AppIndexing/AndroidStudio for more information.
 		client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+		// Play sound on device.
+		btnSoundTest = (Button) this.findViewById(R.id.btnSoundTest);
+		player = new MediaPlayer();
+		setOnPreparedListener();
+		setOnCompletionListener();
+
+		readSoundOnDevice();
 	}
 
 	@Override
@@ -150,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-
-		this.mShortPlayer.release();
-		this.mShortPlayer = null;
 	}
 
 	// Menu UI setting on /res/menu/main_menu.xml
@@ -304,6 +302,15 @@ public class MainActivity extends AppCompatActivity {
 	protected void addOne() {
 		roundFull = dbCounter.addOne();
 		updateScreen(roundFull);
+
+		if (roundFull) {
+			// Play sound for round completed.
+			player.start();
+
+			// Get instance of Vibrator from current Context
+			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+			v.vibrate(2000);
+		}
 	}
 
 	protected void resetCounter() {
@@ -348,14 +355,6 @@ public class MainActivity extends AppCompatActivity {
 		if (roundFull) {
 			btnResetCounter.setText(getResources().getString(R.string.round_full));
 			btnResetCounter.setTextColor(Color.parseColor("#DB0A5B"));
-
-			// Play sound for round completed.
-			int iSoundId = (Integer) mSounds.get(R.raw.completed);
-			this.mShortPlayer.play(iSoundId, 0.99f, 0.99f, 0, 0, 1);
-
-			// Get instance of Vibrator from current Context
-			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-			v.vibrate(2000);
 		} else {
 			btnResetCounter.setText(getResources().getString(R.string.reset_counter));
 			btnResetCounter.setTextColor(getResources().getColor(R.color.color_main_text));
@@ -369,4 +368,52 @@ public class MainActivity extends AppCompatActivity {
 		inflate.inflate(R.menu.main_menu_items, popup.getMenu());
 		popup.show();
 	}
+
+	public void setOnPreparedListener() {
+		player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+			@Override
+			public void onPrepared(MediaPlayer mp) {
+				Log.v("Debug", "Player is prepared.");
+				btnSoundTest.setEnabled(true);
+			}
+		});
+	}
+
+	public void setOnCompletionListener() {
+		player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				Log.v("Debug", "Sound completed");
+			}
+		});
+	}
+
+	public void readSoundOnDevice() {
+		Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.completed);
+
+		player.reset();
+		player.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+
+		try {
+			player.setDataSource(this, uri);
+			player.prepareAsync();
+			Log.v("Debug", "prepareAsync");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void btnSoundTest_onClick(View view) {
+		player.start();
+		Log.v("Debug", "Play sound");
+	}
+
+	// 聲音很快播完, 所以不需要用這個.
+	public void btnSoundStop_onClick(View view) {
+		player.stop();
+		Log.v("Debug", "Stop sound");
+	}
+
+
 }
