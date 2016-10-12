@@ -71,11 +71,11 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.main);
 
-		Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.idMainToolbar);
 		myToolbar.setTitle("誦經計數機 " + BuildConfig.VERSION_NAME);
-		myToolbar.inflateMenu(R.menu.main_menu);
+		myToolbar.inflateMenu(R.menu.menu_main);
 
 //	    setSupportActionBar(myToolbar);
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main_menu, menu);
+		getMenuInflater().inflate(R.menu.menu_main, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -153,45 +153,34 @@ public class MainActivity extends AppCompatActivity {
 		super.onDestroy();
 	}
 
-	// Menu UI setting on /res/menu/main_menu.xml
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		} else if (id == R.id.menu_title_activity_pray_list) {
-			Intent intent = new Intent(this, PrayListActivity.class);
-			startActivityForResult(intent, PRAY_LIST);
-			return true;
-		}
+	// Menu UI setting on /res/menu/menu_main//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		// Handle action bar item clicks here. The action bar will
+//		// automatically handle clicks on the Home/Up button, so long
+//		// as you specify a parent activity in AndroidManifest.xml.
+//		int id = item.getItemId();
+//		if (id == R.id.action_settings) {
+//			return true;
+//		} else if (id == R.id.itemPrayList) {
+//			Intent intent = new Intent(this, PrayListActivity.class);
+//			startActivityForResult(intent, PRAY_LIST);
+//			return true;
+//		}
+//
+//		return super.onOptionsItemSelected(item);
+//	}
 
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //		if (requestCode == PRAY_SETTING) {
 //			if (resultCode == RESULT_OK) {
 //
 //			}
 //		}
-	}
+//	}
 
 	public void btnPraySetting_onClick(View view) {
-		Intent intent = new Intent(this, PraySettingActivity.class);
-		intent.putExtra("id", counter.id);
-		intent.putExtra("current", counter.current);
-		intent.putExtra("round", counter.round);
-		intent.putExtra("roundSize", counter.roundSize);
-		intent.putExtra("name", counter.name);
-		intent.putExtra("notes", counter.notes);
-		intent.putExtra("isCurrent", counter.isCurrent);
-		intent.putExtra("lastUpdate", PrayCounterDbHelper.dateToString(counter.lastUpdate));
-
-		startActivityForResult(intent, PRAY_SETTING);
+		navToPraySettingActivity();
 	}
 
 	public void btnAddOneTest_onClick(View view) {
@@ -362,11 +351,21 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void showActionMenuItem(MenuItem menu) {
-		View menuItemView = findViewById(R.id.action_menu);
+		View menuItemView = findViewById(R.id.menuMain);
 		PopupMenu popup = new PopupMenu(this, menuItemView);
 		MenuInflater inflate = popup.getMenuInflater();
-		inflate.inflate(R.menu.main_menu_items, popup.getMenu());
+		inflate.inflate(R.menu.items_main, popup.getMenu());
 		popup.show();
+	}
+
+	public void itemPrayList_onClick(MenuItem item) {
+		Intent intent = new Intent(this, PrayListActivity.class);
+//		startActivityForResult(intent, PRAY_LIST);
+		startActivity(intent);
+	}
+
+	public void itemPraySetting_onClick(MenuItem item) {
+		navToPraySettingActivity();
 	}
 
 	public void setOnPreparedListener() {
@@ -415,5 +414,17 @@ public class MainActivity extends AppCompatActivity {
 		Log.v("Debug", "Stop sound");
 	}
 
+	public void navToPraySettingActivity() {
+		Intent intent = new Intent(this, PraySettingActivity.class);
+		intent.putExtra("id", counter.id);
+		intent.putExtra("current", counter.current);
+		intent.putExtra("round", counter.round);
+		intent.putExtra("roundSize", counter.roundSize);
+		intent.putExtra("name", counter.name);
+		intent.putExtra("notes", counter.notes);
+		intent.putExtra("isCurrent", counter.isCurrent);
+		intent.putExtra("lastUpdate", PrayCounterDbHelper.dateToString(counter.lastUpdate));
 
+		startActivityForResult(intent, PRAY_SETTING);
+	}
 }

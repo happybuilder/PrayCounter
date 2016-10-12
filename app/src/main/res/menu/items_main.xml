@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/itemPrayList"
+          android:title="誦經紀錄"
+          android:onClick="itemPrayList_onClick" />
+    <item android:id="@+id/itemPraySetting"
+          android:title="設定經文"
+          android:onClick="itemPraySetting_onClick" />
+</menu>

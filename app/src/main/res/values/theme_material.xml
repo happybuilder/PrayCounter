@@ -15,6 +15,7 @@
         <item name="colorPrimary">@color/color_appBar_Bg</item>
         <!-- Toolbar 前景色(文字色) -->
         <item name="android:textColorPrimary">@color/color_appBar_Text</item>
+        <item name="android:itemBackground">@color/color_item_Bg</item>
         <!-- 狀態欄背景色 -->
         <item name="colorPrimaryDark">@color/color_statusBar_Bg</item>
         <!-- theme UI controls like checkboxes and text fields -->

@@ -30,9 +30,9 @@ public class PraySettingActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pray_setting);
+		setContentView(R.layout.pray_setting);
 
-		Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+		Toolbar myToolbar = (Toolbar) findViewById(R.id.idMainToolbar);
         myToolbar.setTitle("誦經計數機 " + BuildConfig.VERSION_NAME);
 
 		// Components.
@@ -95,15 +95,15 @@ public class PraySettingActivity extends AppCompatActivity {
 
 	}	// end onCreate(...)
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.pray_setting, menu);
-		
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.pray_setting, menu);
+//
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//		return true;
+//	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -111,7 +111,7 @@ public class PraySettingActivity extends AppCompatActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.itemPraySetting) {
 			return true;
 		}
 		else if (id == android.R.id.home) {

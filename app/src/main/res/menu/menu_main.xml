@@ -3,7 +3,7 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="edu.wisdom.praycounter2.MainActivity" >
 
-    <item android:id="@+id/action_menu"
+    <item android:id="@+id/menuMain"
           android:title=""
           android:orderInCategory="80"
           android:icon="@drawable/menu_48"

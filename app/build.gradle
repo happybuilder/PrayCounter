@@ -5,7 +5,7 @@ android {
         praycounter_release {
             keyAlias 'praycounter'
             keyPassword 'tvcwisdom'
-            storeFile file('D:/Android_workspace/PrayCounter Workshop/key/android.jks')
+            storeFile file('D:/Android_workspace/PrayCounter Workshop/key/google play deploy/android.jks')
             storePassword 'tvc90136144'
         }
     }
@@ -15,8 +15,8 @@ android {
         applicationId "edu.wisdom.praycounter2"
         minSdkVersion 10
         targetSdkVersion 23
-        versionCode 4
-        versionName '1.1.1'
+        versionCode 6
+        versionName '1.1.3'
     }
     buildTypes {
         debug {
