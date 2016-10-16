@@ -1,5 +1,6 @@
 package edu.wisdom.praycounter2;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -21,9 +22,10 @@ public class PrayListActivity extends AppCompatActivity {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_praylist);
 //        setSupportActionBar(toolbar);
 
-		ArrayList prayListData = getListData();
+		PrayCounterDb db = new PrayCounterDb(this, null);
+		Cursor prayCursor = db.queryPrayInfo();
 		final ListView lv1 = (ListView) findViewById(R.id.lstvPrayList);
-		lv1.setAdapter(new PrayListAdapter(this, prayListData));
+		lv1.setAdapter(new PrayListAdapter(this, prayCursor));
 		lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override

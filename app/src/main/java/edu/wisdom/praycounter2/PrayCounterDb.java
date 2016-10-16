@@ -319,7 +319,7 @@ public class PrayCounterDb {
 		PrayCounterDbHelper dbHelper = new PrayCounterDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         
-		String[] columns = {"_id", COL_NAME, COL_ROUND, COL_ROUNDSIZE, COL_NOTES};
+		String[] columns = {"_id", COL_NAME, COL_ROUND, COL_ROUNDSIZE, COL_NOTES, COL_LASTUPDATE};
     	Cursor cursor = db.query(TABLE_COUNTER, columns, null, null, null, null, null);
 		return cursor;
 	}
