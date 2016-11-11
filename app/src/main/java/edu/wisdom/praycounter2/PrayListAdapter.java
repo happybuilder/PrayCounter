@@ -40,7 +40,7 @@ public class PrayListAdapter extends CursorAdapter {
 		// Extract properties from cursor
 		String prayName = cursor.getString(cursor.getColumnIndexOrThrow(COL_NAME));
 		int roundSize = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ROUNDSIZE));
-		Date prayDate = PrayCounterDbHelper.stringToDate(cursor.getString(cursor.getColumnIndexOrThrow(COL_LASTUPDATE)));
+		Date prayDate = DateUtils.stringToDate(cursor.getString(cursor.getColumnIndexOrThrow(COL_LASTUPDATE)));
 
 		// Populate fields with extracted properties
 		prayNameView.setText(prayName);

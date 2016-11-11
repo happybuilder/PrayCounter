@@ -27,5 +27,6 @@
     <string name="action_list">誦經紀錄</string>
     <string name="title_activity_pray_list2">PrayList2Activity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

@@ -82,13 +82,13 @@ public class PrayCounterDb {
                 values.put("_id", counter.id);
                 values.put(COL_CURRENT, counter.current);
                 values.put(COL_ROUND, counter.round);
-                values.put(COL_LASTUPDATE, PrayCounterDbHelper.dateToString(counter.lastUpdate));
+                values.put(COL_LASTUPDATE, DateUtils.dateToString(counter.lastUpdate));
                 db.update(TABLE_COUNTER, values, "_id = ?", new String[]{Long.toString(counter.id)});
 
                 // Set to current.
                 values.clear();
                 values.put(COL_CURRENT_ID, counter.id);
-                values.put(COL_LASTUPDATE, PrayCounterDbHelper.dateToString(counter.lastUpdate));
+                values.put(COL_LASTUPDATE, DateUtils.dateToString(counter.lastUpdate));
                 db.update(TABLE_STATUS, values, null, null);        // "status" table 只有一個 record, 無需設定 where clause.
             } finally {
                 db.close();
@@ -115,7 +115,7 @@ public class PrayCounterDb {
 	
 	public long insertPray() {
 		Date lastUpdate = new Date();
-		String sLastUpdate = PrayCounterDbHelper.dateToString(lastUpdate);
+		String sLastUpdate = DateUtils.dateToString(lastUpdate);
 
 		ContentValues values = new ContentValues();
         values.put(COL_CURRENT, counter.current);
@@ -140,7 +140,7 @@ public class PrayCounterDb {
 	
 	public void updatePray() {
 		Date lastUpdate = new Date();
-		String sLastUpdate = PrayCounterDbHelper.dateToString(lastUpdate);
+		String sLastUpdate = DateUtils.dateToString(lastUpdate);
 
 		ContentValues values = new ContentValues();
         values.put(COL_CURRENT, counter.current);
@@ -228,7 +228,7 @@ public class PrayCounterDb {
 					counter.roundSize = cursor.getInt(cursor.getColumnIndex(COL_ROUNDSIZE));
 					counter.name = cursor.getString(cursor.getColumnIndex(COL_NAME));
 					counter.notes = cursor.getString(cursor.getColumnIndex(COL_NOTES));
-					counter.lastUpdate = PrayCounterDbHelper.stringToDate(cursor.getString(cursor.getColumnIndex(COL_LASTUPDATE)));
+					counter.lastUpdate = DateUtils.stringToDate(cursor.getString(cursor.getColumnIndex(COL_LASTUPDATE)));
 					
 					return true;
 				}

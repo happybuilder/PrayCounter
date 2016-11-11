@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 //		if (id == R.id.action_settings) {
 //			return true;
 //		} else if (id == R.id.itemPrayList) {
-//			Intent intent = new Intent(this, PrayListActivity.class);
+//			Intent intent = new Intent(this, PrayReportActivity.class);
 //			startActivityForResult(intent, PRAY_LIST);
 //			return true;
 //		}
@@ -359,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void itemPrayList_onClick(MenuItem item) {
-		Intent intent = new Intent(this, PrayListActivity.class);
+		Intent intent = new Intent(this, PrayReportActivity.class);
 //		startActivityForResult(intent, PRAY_LIST);
 		startActivity(intent);
 	}
@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
 		intent.putExtra("name", counter.name);
 		intent.putExtra("notes", counter.notes);
 		intent.putExtra("isCurrent", counter.isCurrent);
-		intent.putExtra("lastUpdate", PrayCounterDbHelper.dateToString(counter.lastUpdate));
+		intent.putExtra("lastUpdate", DateUtils.dateToString(counter.lastUpdate));
 
 		startActivityForResult(intent, PRAY_SETTING);
 	}

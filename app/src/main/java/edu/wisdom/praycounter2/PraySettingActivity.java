@@ -48,7 +48,7 @@ public class PraySettingActivity extends AppCompatActivity {
 		counter.roundSize = getIntent().getExtras().getInt("roundSize");
 		counter.name = getIntent().getExtras().getString("name");
 		counter.notes = getIntent().getExtras().getString("notes");
-		counter.lastUpdate = PrayCounterDbHelper.stringToDate(getIntent().getExtras().getString("lastUpdate"));
+		counter.lastUpdate = DateUtils.stringToDate(getIntent().getExtras().getString("lastUpdate"));
 
 		// Init screen value from bundle.
 		edtPrayName.setText(getDisplayPrayName(counter.name));
